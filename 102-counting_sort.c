@@ -1,66 +1,68 @@
 #include "sort.h"
-#include <stdio.h>
-/**
- *swap_node - swap a node
- *@node: a node
- *@list: a node list
- *Return:a pointer to a node which was entered
- */
-listint_t *swap_node(listint_t *node, listint_t **list)
-{
-	listint_t *back = node->prev, *current = node;
 
-	back->next = current->next;
-	if (current->next)
-		current->next->prev = back;
-	current->next = back;
-	current->prev = back->prev;
-	back->prev = current;
-	if (current->prev)
-		current->prev->next = current;
-	else
-		*list = current;
-	return (current);
-}
 /**
- *cocktail_sort_list - a cocktail sort implementation
+ * get_max - Get the maximum value in an array of integers.
+ * @array: An array of integers.
+ * @size: The size of the array.
  *
- *@list: list
+ * Return: The maximum integer in the array.
  */
-void cocktail_sort_list(listint_t **list)
+int get_max(int *array, int size)
 {
-	listint_t *node;
-	int swap_done = 1;
+	int max, i;
 
-	if (list == '\0' || (*list) == '\0' || (*list)->next == '\0')
-		return;
-	node = *list;
-	while (swap_done == 1)
+	for (max = array[0], i = 1; i < size; i++)
 	{
-		swap_done = 0;
-		while (node->next)
-		{
-			if (node->n > node->next->n)
-			{
-				node = swap_node(node->next, list);
-				swap_done = 1;
-				print_list(*list);
-			}
-			node = node->next;
-		}
-		if (swap_done == 0)
-			break;
-		swap_done = 0;
-		while (node->prev)
-		{
-			if (node->n < node->prev->n)
-			{
-				node = swap_node(node, list);
-				swap_done = 1;
-				print_list(*list);
-			}
-			else
-				node = node->prev;
-		}
+		if (array[i] > max)
+			max = array[i];
 	}
+
+	return (max);
+}
+
+/**
+ * counting_sort - Sort an array of integers in ascending order
+ *                 using the counting sort algorithm.
+ * @array: An array of integers.
+ * @size: The size of the array.
+ *
+ * Description: Prints the counting array after setting it up.
+ */
+void counting_sort(int *array, size_t size)
+{
+	int *count, *sorted, max, i;
+
+	if (array == NULL || size < 2)
+		return;
+
+	sorted = malloc(sizeof(int) * size);
+	if (sorted == NULL)
+		return;
+	max = get_max(array, size);
+	count = malloc(sizeof(int) * (max + 1));
+	if (count == NULL)
+	{
+		free(sorted);
+		return;
+	}
+
+	for (i = 0; i < (max + 1); i++)
+		count[i] = 0;
+	for (i = 0; i < (int)size; i++)
+		count[array[i]] += 1;
+	for (i = 0; i < (max + 1); i++)
+		count[i] += count[i - 1];
+	print_array(count, max + 1);
+
+	for (i = 0; i < (int)size; i++)
+	{
+		sorted[count[array[i]] - 1] = array[i];
+		count[array[i]] -= 1;
+	}
+
+	for (i = 0; i < (int)size; i++)
+		array[i] = sorted[i];
+
+	free(sorted);
+	free(count);
 }
