@@ -1,9 +1,13 @@
-
+#include <stdio.h>
+#include <stddef.h>
+/**
 *swap - positions of two elements into an array
 *@array: a array
 *@item1: a array element
 *@item2: a array element
 */
+
+void print_array(int array[], int size);
 void swap(int *array, int item1, int item2)
 {
 
