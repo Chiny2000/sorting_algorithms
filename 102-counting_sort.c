@@ -1,60 +1,66 @@
 #include "sort.h"
 #include <stdio.h>
 /**
- *_calloc - a calloc function
- *@nmemb: number of elements
- *@size: bit of element
- *Return: pointer to memory
+ *swap_node - swap a node
+ *@node: a node
+ *@list: a node list
+ *Return:a pointer to a node which was entered
  */
-void *_calloc(unsigned int nmemb, unsigned int size)
+listint_t *swap_node(listint_t *node, listint_t **list)
 {
-	unsigned int i = 0;
-	char *p;
+	listint_t *back = node->prev, *current = node;
 
-	if (nmemb == 0 || size == 0)
-		return ('\0');
-	p = malloc(nmemb * size);
-	if (p == '\0')
-		return ('\0');
-	for (i = 0; i < (nmemb * size); i++)
-		p[i] = '\0';
-	return (p);
+	back->next = current->next;
+	if (current->next)
+		current->next->prev = back;
+	current->next = back;
+	current->prev = back->prev;
+	back->prev = current;
+	if (current->prev)
+		current->prev->next = current;
+	else
+		*list = current;
+	return (current);
 }
 /**
- * counting_sort - a counting sort
- * @array: array
- * @size: the array size
+ *cocktail_sort_list - a cocktail sort implementation
+ *
+ *@list: list
  */
-void counting_sort(int *array, size_t size)
+void cocktail_sort_list(listint_t **list)
 {
-	int index, maximun = 0, *counter = '\0', *tmp = '\0';
-	size_t i;
+	listint_t *node;
+	int swap_done = 1;
 
-	if (array == '\0' || size < 2)
+	if (list == '\0' || (*list) == '\0' || (*list)->next == '\0')
 		return;
-
-	for (i = 0; i < size; i++)
-		if (array[i] > maximun)
-			maximun = array[i];
-	counter = _calloc(maximun + 1, sizeof(int));
-	tmp = _calloc(size + 1, sizeof(int));
-
-	for (i = 0; i < size; i++)
-		counter[array[i]]++;
-
-	for (index = 1; index <= maximun; index++)
-		counter[index] += counter[index - 1];
-	print_array(counter, maximun + 1);
-
-	for (i = 0; i < size; ++i)
+	node = *list;
+	while (swap_done == 1)
 	{
-		tmp[counter[array[i]] - 1] = array[i];
-		counter[array[i]]--;
+		swap_done = 0;
+		while (node->next)
+		{
+			if (node->n > node->next->n)
+			{
+				node = swap_node(node->next, list);
+				swap_done = 1;
+				print_list(*list);
+			}
+			node = node->next;
+		}
+		if (swap_done == 0)
+			break;
+		swap_done = 0;
+		while (node->prev)
+		{
+			if (node->n < node->prev->n)
+			{
+				node = swap_node(node, list);
+				swap_done = 1;
+				print_list(*list);
+			}
+			else
+				node = node->prev;
+		}
 	}
-
-	for (i = 0; i < size; i++)
-		array[i] = tmp[i];
-	free(tmp);
-	free(counter);
-
 }
