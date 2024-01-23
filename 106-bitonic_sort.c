@@ -4,6 +4,10 @@
  */
 
 #include "sort.h"
+#include <stdio.h>
+
+#define UP 1
+#define DOWN 0
 
 void swap_ints(int *a, int *b);
 void bitonic_merge(int *array, size_t size, size_t start, size_t seq,
